@@ -1,0 +1,3 @@
+{{/* inscribe: type="list" name="backup-methods" */}}
+- barmanObjectStore
+- volumeSnapshot

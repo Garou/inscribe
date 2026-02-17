@@ -1,0 +1,7 @@
+{{/* inscribe: type="sub-template" group="cnpg-resource-templates" description="QA - 2Gi/1CPU" */}}
+requests:
+  memory: "2Gi"
+  cpu: "1"
+limits:
+  memory: "2Gi"
+  cpu: "1"

@@ -1,0 +1,12 @@
+{{/* inscribe: type="template" name="cnpg-backup" command="backup cnpg" description="CNPG Scheduled Backup" */}}
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: {{ manual "name" "dns-name" }}
+  namespace: {{ autoDetect "namespace" }}
+spec:
+  schedule: "{{ manual "schedule" "string" }}"
+  backupOwnerReference: self
+  cluster:
+    name: {{ autoDetect "cnpg-clusters" }}
+  method: {{ list "backup-methods" }}

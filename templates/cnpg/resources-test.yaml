@@ -1,0 +1,7 @@
+{{/* inscribe: type="sub-template" group="cnpg-resource-templates" description="Test - 512Mi/500m" */}}
+requests:
+  memory: "512Mi"
+  cpu: "500m"
+limits:
+  memory: "512Mi"
+  cpu: "500m"

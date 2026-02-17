@@ -1,0 +1,10 @@
+{{/* inscribe: type="template" name="cnpg-cluster" command="cluster cnpg" description="CNPG PostgreSQL Cluster" */}}
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ manual "name" "dns-name" }}
+  namespace: {{ autoDetect "namespace" }}
+spec:
+  instances: {{ manual "instances" "integer" }}
+  resources:
+{{ templateGroup "cnpg-resource-templates" | indent 4 }}
