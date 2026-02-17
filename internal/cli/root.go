@@ -22,8 +22,10 @@ func NewRootCmd() *cobra.Command {
 	cmd.PersistentFlags().StringVar(&templateDir, "template-dir", getEnvOrDefault("INSCRIBE_TEMPLATE_DIR", "templates"), "Path to template directory")
 	cmd.PersistentFlags().StringVarP(&outputDir, "output-dir", "o", ".", "Output directory for generated manifests")
 
-	cmd.AddCommand(newClusterCmd())
-	cmd.AddCommand(newBackupCmd())
+	defaultDir := getEnvOrDefault("INSCRIBE_TEMPLATE_DIR", "templates")
+	for _, sub := range BuildDynamicCommands(defaultDir) {
+		cmd.AddCommand(sub)
+	}
 	cmd.AddCommand(newEnvCmd())
 
 	return cmd

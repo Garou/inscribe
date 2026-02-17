@@ -24,7 +24,7 @@ The binary is output to `bin/inscribe`.
   --name=mydb \
   --namespace=default \
   --instances=3 \
-  --resources="Production - 4Gi/2CPU" \
+  --cnpg-resource-templates="Production - 4Gi/2CPU" \
   --context=minikube \
   --filename=mydb-cluster.yaml
 
@@ -55,7 +55,7 @@ Generates a CloudNativePG PostgreSQL cluster manifest.
 | `--name` | Cluster name (must be a valid DNS name) |
 | `--namespace` | Kubernetes namespace (auto-detected from cluster if omitted) |
 | `--instances` | Number of PostgreSQL instances |
-| `--resources` | Resource profile: `"Production - 4Gi/2CPU"`, `"QA - 2Gi/1CPU"`, or `"Test - 512Mi/500m"` |
+| `--cnpg-resource-templates` | Resource profile: `"Production - 4Gi/2CPU"`, `"QA - 2Gi/1CPU"`, or `"Test - 512Mi/500m"` |
 | `--context` | Kubernetes context to use |
 | `--filename` | Output filename |
 
@@ -68,8 +68,8 @@ Generates a CloudNativePG scheduled backup manifest.
 | `--name` | Backup name (must be a valid DNS name) |
 | `--namespace` | Kubernetes namespace (auto-detected from cluster if omitted) |
 | `--schedule` | Cron schedule expression (e.g. `"0 0 * * *"`) |
-| `--cluster-name` | CNPG cluster to back up (auto-detected from cluster if omitted) |
-| `--method` | Backup method: `barmanObjectStore` or `volumeSnapshot` |
+| `--cnpg-clusters` | CNPG cluster to back up (auto-detected from cluster if omitted) |
+| `--backup-methods` | Backup method: `barmanObjectStore` or `volumeSnapshot` |
 | `--context` | Kubernetes context to use |
 | `--filename` | Output filename |
 
