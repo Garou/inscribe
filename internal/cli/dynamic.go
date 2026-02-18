@@ -104,8 +104,15 @@ func buildLeafCommand(reg domain.TemplateRegistry, tmpl domain.TemplateMeta) *co
 		},
 	}
 
-	// Register a flag per extracted field
+	// Register a flag per extracted field, deduplicating by name since templates
+	// may reference the same field multiple times (e.g. {{ input "name" "dns-name" }}
+	// used in both metadata.name and service names).
+	registered := make(map[string]bool)
 	for _, f := range fields {
+		if registered[f.Name] {
+			continue
+		}
+		registered[f.Name] = true
 		cmd.Flags().StringVar(flagVars[f.Name], f.Name, "", flagDescription(reg, f))
 	}
 

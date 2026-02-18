@@ -253,3 +253,23 @@ ns: {{ autoList "namespace" }}
 		t.Errorf("expected flag description to note auto-listing, got %q", f.Usage)
 	}
 }
+
+func TestBuildDynamicCommandsDuplicateFields(t *testing.T) {
+	dir := t.TempDir()
+	writeFile(t, filepath.Join(dir, "tmpl.yaml"),
+		`{{/* inscribe: type="template" name="test" command="test cmd" description="Test" */}}
+name: {{ input "username" "string" }}
+ref: prefix-{{ input "username" "string" }}-suffix
+`)
+
+	cmds := BuildDynamicCommands(dir)
+	if len(cmds) != 1 {
+		t.Fatalf("expected 1 parent, got %d", len(cmds))
+	}
+
+	leaf, _, _ := cmds[0].Find([]string{"cmd"})
+	f := leaf.Flags().Lookup("username")
+	if f == nil {
+		t.Fatal("expected --username flag")
+	}
+}
