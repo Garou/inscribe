@@ -27,14 +27,14 @@ func TestParserExtractFields(t *testing.T) {
 	}
 
 	// Check extracted fields
-	if fields[0].Name != "name" || fields[0].Type != domain.FieldManual {
-		t.Errorf("field[0] = %+v, want name/FieldManual", fields[0])
+	if fields[0].Name != "name" || fields[0].Type != domain.FieldInput {
+		t.Errorf("field[0] = %+v, want name/FieldInput", fields[0])
 	}
 	if fields[0].ValidationType != "dns-name" {
 		t.Errorf("field[0].ValidationType = %q, want %q", fields[0].ValidationType, "dns-name")
 	}
-	if fields[1].Name != "namespace" || fields[1].Type != domain.FieldAutoDetect {
-		t.Errorf("field[1] = %+v, want namespace/FieldAutoDetect", fields[1])
+	if fields[1].Name != "namespace" || fields[1].Type != domain.FieldAutoList {
+		t.Errorf("field[1] = %+v, want namespace/FieldAutoList", fields[1])
 	}
 	if fields[2].Name != "test-group" || fields[2].Type != domain.FieldTemplateGroup {
 		t.Errorf("field[2] = %+v, want test-group/FieldTemplateGroup", fields[2])
@@ -79,9 +79,9 @@ func TestParserRoundTrip(t *testing.T) {
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ manual "name" "dns-name" }}
+  name: {{ input "name" "dns-name" }}
 data:
-  key: {{ manual "value" "string" }}
+  key: {{ input "value" "string" }}
 `)
 
 	reg, err := NewRegistry(dir)

@@ -13,7 +13,7 @@ func TestBuildDynamicCommandsTreeStructure(t *testing.T) {
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ manual "name" "dns-name" }}
+  name: {{ input "name" "dns-name" }}
 `)
 
 	cmds := BuildDynamicCommands(dir)
@@ -46,10 +46,10 @@ func TestBuildDynamicCommandsDynamicFlags(t *testing.T) {
 apiVersion: v1
 kind: Cluster
 metadata:
-  name: {{ manual "name" "dns-name" }}
-  namespace: {{ autoDetect "namespace" }}
+  name: {{ input "name" "dns-name" }}
+  namespace: {{ autoList "namespace" }}
 spec:
-  instances: {{ manual "instances" "integer" }}
+  instances: {{ input "instances" "integer" }}
 `)
 
 	cmds := BuildDynamicCommands(dir)
@@ -80,11 +80,11 @@ func TestBuildDynamicCommandsSharedParent(t *testing.T) {
 	dir := t.TempDir()
 	writeFile(t, filepath.Join(dir, "cluster.yaml"),
 		`{{/* inscribe: type="template" name="cnpg-cluster" command="cluster cnpg" description="CNPG Cluster" */}}
-name: {{ manual "name" "dns-name" }}
+name: {{ input "name" "dns-name" }}
 `)
 	writeFile(t, filepath.Join(dir, "backup.yaml"),
 		`{{/* inscribe: type="template" name="cnpg-backup" command="backup cnpg" description="CNPG Backup" */}}
-name: {{ manual "name" "dns-name" }}
+name: {{ input "name" "dns-name" }}
 `)
 
 	cmds := BuildDynamicCommands(dir)
@@ -105,11 +105,11 @@ func TestBuildDynamicCommandsMultipleLeafsSameParent(t *testing.T) {
 	dir := t.TempDir()
 	writeFile(t, filepath.Join(dir, "cnpg-cluster.yaml"),
 		`{{/* inscribe: type="template" name="cnpg-cluster" command="cluster cnpg" description="CNPG Cluster" */}}
-name: {{ manual "name" "dns-name" }}
+name: {{ input "name" "dns-name" }}
 `)
 	writeFile(t, filepath.Join(dir, "other-cluster.yaml"),
 		`{{/* inscribe: type="template" name="other-cluster" command="cluster other" description="Other Cluster" */}}
-name: {{ manual "name" "dns-name" }}
+name: {{ input "name" "dns-name" }}
 `)
 
 	cmds := BuildDynamicCommands(dir)
@@ -189,7 +189,7 @@ func TestFlagDescriptionList(t *testing.T) {
 	dir := t.TempDir()
 	writeFile(t, filepath.Join(dir, "backup.yaml"),
 		`{{/* inscribe: type="template" name="cnpg-backup" command="backup cnpg" description="CNPG Backup" */}}
-method: {{ list "methods" }}
+method: {{ staticList "methods" }}
 `)
 	writeFile(t, filepath.Join(dir, "methods.yaml"),
 		`{{/* inscribe: type="list" name="methods" */}}
@@ -220,7 +220,7 @@ func TestFlagDescriptionManual(t *testing.T) {
 	dir := t.TempDir()
 	writeFile(t, filepath.Join(dir, "tmpl.yaml"),
 		`{{/* inscribe: type="template" name="test" command="test cmd" description="Test" */}}
-name: {{ manual "name" "dns-name" }}
+name: {{ input "name" "dns-name" }}
 `)
 
 	cmds := BuildDynamicCommands(dir)
@@ -239,7 +239,7 @@ func TestFlagDescriptionAutoDetect(t *testing.T) {
 	dir := t.TempDir()
 	writeFile(t, filepath.Join(dir, "tmpl.yaml"),
 		`{{/* inscribe: type="template" name="test" command="test cmd" description="Test" */}}
-ns: {{ autoDetect "namespace" }}
+ns: {{ autoList "namespace" }}
 `)
 
 	cmds := BuildDynamicCommands(dir)
@@ -249,7 +249,7 @@ ns: {{ autoDetect "namespace" }}
 		t.Fatal("expected --namespace flag")
 	}
 
-	if !strings.Contains(f.Usage, "auto-detected") {
-		t.Errorf("expected flag description to note auto-detection, got %q", f.Usage)
+	if !strings.Contains(f.Usage, "auto-listed") {
+		t.Errorf("expected flag description to note auto-listing, got %q", f.Usage)
 	}
 }

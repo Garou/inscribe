@@ -119,10 +119,10 @@ func buildLeafCommand(reg domain.TemplateRegistry, tmpl domain.TemplateMeta) *co
 // flagDescription generates help text for a dynamic flag based on its field type.
 func flagDescription(reg domain.TemplateRegistry, f domain.FieldDefinition) string {
 	switch f.Type {
-	case domain.FieldManual:
+	case domain.FieldInput:
 		return fmt.Sprintf("Value for %s (validated as %s)", f.Name, f.ValidationType)
-	case domain.FieldAutoDetect:
-		return fmt.Sprintf("Value for %s (auto-detected from cluster if omitted)", f.Source)
+	case domain.FieldAutoList:
+		return fmt.Sprintf("Value for %s (auto-listed from cluster if omitted)", f.Source)
 	case domain.FieldTemplateGroup:
 		subs, err := reg.GetSubTemplates(f.Source)
 		if err != nil {
@@ -133,7 +133,7 @@ func flagDescription(reg domain.TemplateRegistry, f domain.FieldDefinition) stri
 			descs = append(descs, fmt.Sprintf("%q", s.Description))
 		}
 		return fmt.Sprintf("One of: %s", strings.Join(descs, ", "))
-	case domain.FieldList:
+	case domain.FieldStaticList:
 		list, err := reg.GetStaticList(f.Source)
 		if err != nil {
 			return fmt.Sprintf("Static list: %s", f.Source)

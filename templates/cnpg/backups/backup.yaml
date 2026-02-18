@@ -2,9 +2,9 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: Backup
 metadata:
-  name: {{ manual "name" "dns-name" }}
-  namespace: {{ autoDetect "namespace" }}
+  name: {{ input "name" "dns-name" }}
+  namespace: {{ autoList "namespace" }}
 spec:
   cluster:
-    name: {{ autoDetect "cnpg-clusters" }}
-  method: {{ list "backup-methods" }}
+    name: {{ autoList "cnpg-clusters" }}
+  method: {{ staticList "backup-methods" }}

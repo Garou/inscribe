@@ -1,6 +1,6 @@
 # Inscribe
 
-An interactive CLI/TUI tool for generating Kubernetes manifest files from templates. Inscribe connects to live clusters to auto-detect values like namespaces and CNPG clusters, validates input, and produces correctly-structured YAML.
+An interactive CLI/TUI tool for generating Kubernetes manifest files from templates. Inscribe connects to live clusters to auto-list values like namespaces and CNPG clusters, validates input, and produces correctly-structured YAML.
 
 ## Install
 
@@ -55,7 +55,7 @@ Generates a CloudNativePG PostgreSQL cluster manifest.
 | Flag | Description |
 |---|---|
 | `--name` | Cluster name (must be a valid DNS name) |
-| `--namespace` | Kubernetes namespace (auto-detected from cluster if omitted) |
+| `--namespace` | Kubernetes namespace (auto-listed from cluster if omitted) |
 | `--instances` | Number of PostgreSQL instances |
 | `--cnpg-resource-templates` | Resource profile: `"Production - 4Gi/2CPU"`, `"QA - 2Gi/1CPU"`, or `"Test - 512Mi/500m"` |
 | `--context` | Kubernetes context to use |
@@ -68,8 +68,8 @@ Generates a CloudNativePG one-off backup manifest.
 | Flag | Description |
 |---|---|
 | `--name` | Backup name (must be a valid DNS name) |
-| `--namespace` | Kubernetes namespace (auto-detected from cluster if omitted) |
-| `--cnpg-clusters` | CNPG cluster to back up (auto-detected from cluster if omitted) |
+| `--namespace` | Kubernetes namespace (auto-listed from cluster if omitted) |
+| `--cnpg-clusters` | CNPG cluster to back up (auto-listed from cluster if omitted) |
 | `--backup-methods` | Backup method: `barmanObjectStore` or `volumeSnapshot` |
 | `--context` | Kubernetes context to use |
 | `--filename` | Output filename |
@@ -81,9 +81,9 @@ Generates a CloudNativePG scheduled backup manifest.
 | Flag | Description |
 |---|---|
 | `--name` | Backup name (must be a valid DNS name) |
-| `--namespace` | Kubernetes namespace (auto-detected from cluster if omitted) |
+| `--namespace` | Kubernetes namespace (auto-listed from cluster if omitted) |
 | `--schedule` | Cron schedule expression (e.g. `"0 0 * * *"`) |
-| `--cnpg-clusters` | CNPG cluster to back up (auto-detected from cluster if omitted) |
+| `--cnpg-clusters` | CNPG cluster to back up (auto-listed from cluster if omitted) |
 | `--backup-methods` | Backup method: `barmanObjectStore` or `volumeSnapshot` |
 | `--context` | Kubernetes context to use |
 | `--filename` | Output filename |
@@ -120,10 +120,10 @@ Templates live in the directory specified by `--template-dir` or `INSCRIBE_TEMPL
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: {{ manual "name" "dns-name" }}
-  namespace: {{ autoDetect "namespace" }}
+  name: {{ input "name" "dns-name" }}
+  namespace: {{ autoList "namespace" }}
 spec:
-  instances: {{ manual "instances" "integer" }}
+  instances: {{ input "instances" "integer" }}
   resources:
 {{ templateGroup "cnpg-resource-templates" | indent 4 }}
 ```
@@ -152,15 +152,15 @@ limits:
 
 | Function | Description | Example |
 |---|---|---|
-| `manual "name" "validation"` | User-provided field with validation | `{{ manual "name" "dns-name" }}` |
-| `autoDetect "source"` | Auto-populated from Kubernetes | `{{ autoDetect "namespace" }}` |
+| `input "name" "validation"` | User-provided field with validation | `{{ input "name" "dns-name" }}` |
+| `autoList "source"` | Auto-populated from Kubernetes | `{{ autoList "namespace" }}` |
 | `templateGroup "group"` | Pick from sub-template group | `{{ templateGroup "cnpg-resource-templates" \| indent 4 }}` |
-| `list "name"` | Pick from static list | `{{ list "backup-methods" }}` |
+| `staticList "name"` | Pick from static list | `{{ staticList "backup-methods" }}` |
 | `indent N` | Indent piped content by N spaces | `{{ templateGroup "grp" \| indent 4 }}` |
 
 ### Validation Types
 
-Used with `manual` fields:
+Used with `input` fields:
 
 | Type | Rules |
 |---|---|
@@ -174,7 +174,7 @@ Used with `manual` fields:
 
 ### Auto-Detect Sources
 
-Used with `autoDetect` fields:
+Used with `autoList` fields:
 
 | Source | Description |
 |---|---|

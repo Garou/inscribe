@@ -15,7 +15,7 @@ func TestExtractorFuncMap(t *testing.T) {
 	var mu sync.Mutex
 	fm := NewExtractorFuncMap(&fields, &mu)
 
-	tmplStr := `name={{ manual "name" "dns-name" }} ns={{ autoDetect "namespace" }} group={{ templateGroup "resources" }} pick={{ list "items" }}`
+	tmplStr := `name={{ input "name" "dns-name" }} ns={{ autoList "namespace" }} group={{ templateGroup "resources" }} pick={{ staticList "items" }}`
 	tmpl, err := template.New("test").Funcs(fm).Parse(tmplStr)
 	if err != nil {
 		t.Fatalf("parse error: %v", err)
@@ -36,10 +36,10 @@ func TestExtractorFuncMap(t *testing.T) {
 		ftype domain.FieldType
 		order int
 	}{
-		{"name", domain.FieldManual, 0},
-		{"namespace", domain.FieldAutoDetect, 1},
+		{"name", domain.FieldInput, 0},
+		{"namespace", domain.FieldAutoList, 1},
 		{"resources", domain.FieldTemplateGroup, 2},
-		{"items", domain.FieldList, 3},
+		{"items", domain.FieldStaticList, 3},
 	}
 
 	for i, e := range expected {
@@ -64,7 +64,7 @@ func TestRendererFuncMap(t *testing.T) {
 	}
 	fm := NewRendererFuncMap(values)
 
-	tmplStr := `name={{ manual "name" "dns-name" }} ns={{ autoDetect "namespace" }} group={{ templateGroup "resources" }} pick={{ list "items" }}`
+	tmplStr := `name={{ input "name" "dns-name" }} ns={{ autoList "namespace" }} group={{ templateGroup "resources" }} pick={{ staticList "items" }}`
 	tmpl, err := template.New("test").Funcs(fm).Parse(tmplStr)
 	if err != nil {
 		t.Fatalf("parse error: %v", err)

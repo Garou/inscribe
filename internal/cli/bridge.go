@@ -77,7 +77,7 @@ func RunBridge(cfg BridgeConfig) error {
 		}
 
 		// Validate manual fields
-		if f.Type == domain.FieldManual {
+		if f.Type == domain.FieldInput {
 			if _, err := domain.ParseValue(f.ValidationType, v); err != nil {
 				return fmt.Errorf("invalid value for %q: %w", f.Name, err)
 			}
@@ -103,7 +103,7 @@ func RunBridge(cfg BridgeConfig) error {
 		}
 
 		// Resolve list values
-		if f.Type == domain.FieldList {
+		if f.Type == domain.FieldStaticList {
 			list, err := reg.GetStaticList(f.Source)
 			if err != nil {
 				return fmt.Errorf("loading static list %q: %w", f.Source, err)

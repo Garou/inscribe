@@ -18,7 +18,7 @@ type WizardResult struct {
 }
 
 // RunWizard orchestrates the TUI wizard flow:
-// 1. Context/namespace selection (if autoDetect fields exist)
+// 1. Context/namespace selection (if autoList fields exist)
 // 2. Field collection for remaining fields
 // 3. Filename input
 func RunWizard(
@@ -42,7 +42,7 @@ func RunWizard(
 	needsK8s := false
 	needsCNPGSelect := false
 	for _, f := range fields {
-		if f.Type == domain.FieldAutoDetect {
+		if f.Type == domain.FieldAutoList {
 			needsK8s = true
 			if f.Source == "cnpg-clusters" {
 				needsCNPGSelect = true
@@ -80,7 +80,7 @@ func RunWizard(
 		}
 	}
 
-	// Set autoDetect values
+	// Set autoList values
 	if needsK8s {
 		if p, ok := valuePtrs["namespace"]; ok {
 			*p = namespaceValue
@@ -105,7 +105,7 @@ func RunWizard(
 	}
 
 	// Phase 3: Collect remaining fields (manual, templateGroup, list)
-	remainingFields := filterNonAutoDetectFields(fields, prefilledValues)
+	remainingFields := filterNonAutoListFields(fields, prefilledValues)
 	if len(remainingFields) > 0 {
 		fieldGroup := organisms.FieldGroup(remainingFields, valuePtrs, registry)
 		fieldForm := huh.NewForm(fieldGroup).WithTheme(atoms.Theme())
@@ -148,11 +148,11 @@ func RunWizard(
 	return result, nil
 }
 
-// filterNonAutoDetectFields returns fields that are not autoDetect and not already pre-filled.
-func filterNonAutoDetectFields(fields []domain.FieldDefinition, prefilled map[string]string) []domain.FieldDefinition {
+// filterNonAutoListFields returns fields that are not autoList and not already pre-filled.
+func filterNonAutoListFields(fields []domain.FieldDefinition, prefilled map[string]string) []domain.FieldDefinition {
 	var result []domain.FieldDefinition
 	for _, f := range fields {
-		if f.Type == domain.FieldAutoDetect {
+		if f.Type == domain.FieldAutoList {
 			continue
 		}
 		if _, ok := prefilled[f.Name]; ok {

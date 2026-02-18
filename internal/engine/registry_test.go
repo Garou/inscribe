@@ -140,8 +140,8 @@ func setupTestTemplates(t *testing.T) string {
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ manual "name" "dns-name" }}
-  namespace: {{ autoDetect "namespace" }}
+  name: {{ input "name" "dns-name" }}
+  namespace: {{ autoList "namespace" }}
 data:
   resources:
 {{ templateGroup "test-group" | indent 4 }}

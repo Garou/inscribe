@@ -4,18 +4,18 @@ package domain
 type FieldType int
 
 const (
-	FieldManual        FieldType = iota // User-provided with validation
-	FieldAutoDetect                     // Pulled from k8s
+	FieldInput         FieldType = iota // User-provided with validation
+	FieldAutoList                       // Pulled from k8s
 	FieldTemplateGroup                  // Pick from sub-template group
-	FieldList                           // Pick from static predefined list
+	FieldStaticList                     // Pick from static predefined list
 )
 
 // FieldDefinition is extracted from a template during the first pass.
 type FieldDefinition struct {
 	Name           string
 	Type           FieldType
-	ValidationType string // For manual: "dns-name", "integer", "string", etc.
-	Source         string // For autoDetect: "namespace", "cnpg-clusters"; for templateGroup/list: group/list name
+	ValidationType string // For input: "dns-name", "integer", "string", etc.
+	Source         string // For autoList: "namespace", "cnpg-clusters"; for templateGroup/staticList: group/list name
 	Order          int
 }
 

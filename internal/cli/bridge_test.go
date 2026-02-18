@@ -16,9 +16,9 @@ func TestRunBridgeDirectRender(t *testing.T) {
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ manual "name" "dns-name" }}
+  name: {{ input "name" "dns-name" }}
 data:
-  key: {{ manual "value" "string" }}
+  key: {{ input "value" "string" }}
 `)
 
 	err := RunBridge(BridgeConfig{
@@ -58,7 +58,7 @@ func TestRunBridgeValidationError(t *testing.T) {
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ manual "name" "dns-name" }}
+  name: {{ input "name" "dns-name" }}
 `)
 
 	err := RunBridge(BridgeConfig{
@@ -137,7 +137,7 @@ func TestRunBridgeWithStaticList(t *testing.T) {
 
 	writeFile(t, filepath.Join(dir, "main.yaml"),
 		`{{/* inscribe: type="template" name="with-list" command="test" description="Test" */}}
-method: {{ list "methods" }}
+method: {{ staticList "methods" }}
 `)
 
 	writeFile(t, filepath.Join(dir, "methods.yaml"),
@@ -175,7 +175,7 @@ func TestRunBridgeInvalidListValue(t *testing.T) {
 
 	writeFile(t, filepath.Join(dir, "main.yaml"),
 		`{{/* inscribe: type="template" name="with-list" command="test" description="Test" */}}
-method: {{ list "methods" }}
+method: {{ staticList "methods" }}
 `)
 
 	writeFile(t, filepath.Join(dir, "methods.yaml"),

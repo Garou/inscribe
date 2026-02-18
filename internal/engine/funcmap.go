@@ -14,24 +14,24 @@ import (
 func NewExtractorFuncMap(collector *[]domain.FieldDefinition, mu *sync.Mutex) template.FuncMap {
 	order := 0
 	return template.FuncMap{
-		"manual": func(name, validationType string) string {
+		"input": func(name, validationType string) string {
 			mu.Lock()
 			defer mu.Unlock()
 			*collector = append(*collector, domain.FieldDefinition{
 				Name:           name,
-				Type:           domain.FieldManual,
+				Type:           domain.FieldInput,
 				ValidationType: validationType,
 				Order:          order,
 			})
 			order++
 			return fmt.Sprintf("__PLACEHOLDER_%s__", name)
 		},
-		"autoDetect": func(source string) string {
+		"autoList": func(source string) string {
 			mu.Lock()
 			defer mu.Unlock()
 			*collector = append(*collector, domain.FieldDefinition{
 				Name:   source,
-				Type:   domain.FieldAutoDetect,
+				Type:   domain.FieldAutoList,
 				Source: source,
 				Order:  order,
 			})
@@ -50,12 +50,12 @@ func NewExtractorFuncMap(collector *[]domain.FieldDefinition, mu *sync.Mutex) te
 			order++
 			return fmt.Sprintf("__PLACEHOLDER_%s__", group)
 		},
-		"list": func(listName string) string {
+		"staticList": func(listName string) string {
 			mu.Lock()
 			defer mu.Unlock()
 			*collector = append(*collector, domain.FieldDefinition{
 				Name:   listName,
-				Type:   domain.FieldList,
+				Type:   domain.FieldStaticList,
 				Source: listName,
 				Order:  order,
 			})
@@ -71,13 +71,13 @@ func NewExtractorFuncMap(collector *[]domain.FieldDefinition, mu *sync.Mutex) te
 // NewRendererFuncMap returns a FuncMap for pass 2 (rendering with collected values).
 func NewRendererFuncMap(values map[string]string) template.FuncMap {
 	return template.FuncMap{
-		"manual": func(name, validationType string) string {
+		"input": func(name, validationType string) string {
 			if v, ok := values[name]; ok {
 				return v
 			}
 			return ""
 		},
-		"autoDetect": func(source string) string {
+		"autoList": func(source string) string {
 			if v, ok := values[source]; ok {
 				return v
 			}
@@ -89,7 +89,7 @@ func NewRendererFuncMap(values map[string]string) template.FuncMap {
 			}
 			return ""
 		},
-		"list": func(listName string) string {
+		"staticList": func(listName string) string {
 			if v, ok := values[listName]; ok {
 				return v
 			}

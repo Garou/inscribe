@@ -2,11 +2,11 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
 metadata:
-  name: {{ manual "name" "dns-name" }}
-  namespace: {{ autoDetect "namespace" }}
+  name: {{ input "name" "dns-name" }}
+  namespace: {{ autoList "namespace" }}
 spec:
-  schedule: "{{ manual "schedule" "cron-schedule" }}"
+  schedule: "{{ input "schedule" "cron-schedule" }}"
   backupOwnerReference: self
   cluster:
-    name: {{ autoDetect "cnpg-clusters" }}
-  method: {{ list "backup-methods" }}
+    name: {{ autoList "cnpg-clusters" }}
+  method: {{ staticList "backup-methods" }}

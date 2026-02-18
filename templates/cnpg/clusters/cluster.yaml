@@ -2,9 +2,9 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: {{ manual "name" "dns-name" }}
-  namespace: {{ autoDetect "namespace" }}
+  name: {{ input "name" "dns-name" }}
+  namespace: {{ autoList "namespace" }}
 spec:
-  instances: {{ manual "instances" "integer" }}
+  instances: {{ input "instances" "integer" }}
   resources:
 {{ templateGroup "cnpg-resource-templates" | indent 4 }}
