@@ -31,6 +31,16 @@ type BridgeConfig struct {
 
 // RunBridge orchestrates the template→TUI→render→write flow.
 func RunBridge(cfg BridgeConfig) error {
+	// Validate filename and output directory early
+	if cfg.Filename != "" {
+		if _, err := domain.NewFilename(cfg.Filename); err != nil {
+			return fmt.Errorf("invalid filename: %w", err)
+		}
+	}
+	if _, err := domain.NewPath(cfg.OutputDir); err != nil {
+		return fmt.Errorf("invalid output directory: %w", err)
+	}
+
 	// 1. Load template registry
 	reg, err := engine.NewRegistry(cfg.TemplateDir)
 	if err != nil {
@@ -68,11 +78,8 @@ func RunBridge(cfg BridgeConfig) error {
 
 		// Validate manual fields
 		if f.Type == domain.FieldManual {
-			validator, err := domain.GetValidator(f.ValidationType)
-			if err == nil {
-				if err := validator(v); err != nil {
-					return fmt.Errorf("invalid value for %q: %w", f.Name, err)
-				}
+			if _, err := domain.ParseValue(f.ValidationType, v); err != nil {
+				return fmt.Errorf("invalid value for %q: %w", f.Name, err)
 			}
 		}
 

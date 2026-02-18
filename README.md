@@ -170,6 +170,7 @@ Used with `manual` fields:
 | `port` | Integer between 1 and 65535 |
 | `memory` | Kubernetes memory quantity (e.g. `256Mi`, `4Gi`) |
 | `cpu` | Kubernetes CPU quantity (e.g. `100m`, `0.5`, `2`) |
+| `cron-schedule` | Standard 5-field cron expression (e.g. `0 0 * * *`, `*/5 * * * 1-5`) |
 
 ### Auto-Detect Sources
 

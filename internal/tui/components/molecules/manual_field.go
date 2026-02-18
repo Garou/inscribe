@@ -11,10 +11,11 @@ import (
 func ManualField(def domain.FieldDefinition, value *string) *huh.Input {
 	input := atoms.StyledInput(def.Name, "Enter "+def.Name, value)
 
-	validator, err := domain.GetValidator(def.ValidationType)
-	if err == nil {
+	if def.ValidationType != "" {
+		vt := def.ValidationType
 		input = input.Validate(func(s string) error {
-			return validator(s)
+			_, err := domain.ParseValue(vt, s)
+			return err
 		})
 	}
 

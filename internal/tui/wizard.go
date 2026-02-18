@@ -125,10 +125,8 @@ func RunWizard(
 					Placeholder("manifest.yaml").
 					Value(&filename).
 					Validate(func(s string) error {
-						if s == "" {
-							return fmt.Errorf("filename cannot be empty")
-						}
-						return nil
+						_, err := domain.NewFilename(s)
+						return err
 					}),
 			).Title("Output"),
 		).WithTheme(atoms.Theme())

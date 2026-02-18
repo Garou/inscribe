@@ -5,7 +5,7 @@ metadata:
   name: {{ manual "name" "dns-name" }}
   namespace: {{ autoDetect "namespace" }}
 spec:
-  schedule: "{{ manual "schedule" "string" }}"
+  schedule: "{{ manual "schedule" "cron-schedule" }}"
   backupOwnerReference: self
   cluster:
     name: {{ autoDetect "cnpg-clusters" }}
