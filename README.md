@@ -41,6 +41,8 @@ inscribe
 ├── cluster                  # Generate cluster manifests
 │   └── cnpg                 # CNPG PostgreSQL Cluster
 ├── backup                   # Generate backup manifests
+│   └── cnpg                 # CNPG One-Off Backup
+├── scheduled-backup         # Generate scheduled backup manifests
 │   └── cnpg                 # CNPG Scheduled Backup
 ├── env [path]               # Output shell config for template directory
 └── completion               # Shell completion scripts
@@ -60,6 +62,19 @@ Generates a CloudNativePG PostgreSQL cluster manifest.
 | `--filename` | Output filename |
 
 ### `inscribe backup cnpg`
+
+Generates a CloudNativePG one-off backup manifest.
+
+| Flag | Description |
+|---|---|
+| `--name` | Backup name (must be a valid DNS name) |
+| `--namespace` | Kubernetes namespace (auto-detected from cluster if omitted) |
+| `--cnpg-clusters` | CNPG cluster to back up (auto-detected from cluster if omitted) |
+| `--backup-methods` | Backup method: `barmanObjectStore` or `volumeSnapshot` |
+| `--context` | Kubernetes context to use |
+| `--filename` | Output filename |
+
+### `inscribe scheduled-backup cnpg`
 
 Generates a CloudNativePG scheduled backup manifest.
 

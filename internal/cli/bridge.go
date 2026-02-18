@@ -1,7 +1,9 @@
 package cli
 
 import (
+	"bytes"
 	"fmt"
+	"os"
 	"strings"
 
 	"inscribe/internal/domain"
@@ -11,6 +13,7 @@ import (
 	"inscribe/internal/tui"
 	"inscribe/internal/tui/components/atoms"
 
+	"github.com/alecthomas/chroma/v2/quick"
 	"github.com/charmbracelet/huh"
 	"github.com/spf13/cobra"
 )
@@ -136,7 +139,21 @@ func RunBridge(cfg BridgeConfig) error {
 	}
 
 	fmt.Printf("Manifest written to: %s\n", path)
+	fmt.Println()
+	printColoredYAML(rendered)
+	fmt.Println()
 	return nil
+}
+
+// printColoredYAML writes syntax-highlighted YAML to stdout.
+func printColoredYAML(yaml string) {
+	var buf bytes.Buffer
+	err := quick.Highlight(&buf, yaml, "yaml", "terminal256", "monokai")
+	if err != nil {
+		fmt.Print(yaml)
+		return
+	}
+	buf.WriteTo(os.Stdout)
 }
 
 // RunParentCommand handles parent commands (e.g. "inscribe cluster") by scanning

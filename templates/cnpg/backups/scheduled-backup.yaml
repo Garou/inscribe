@@ -1,4 +1,4 @@
-{{/* inscribe: type="template" name="cnpg-backup" command="backup cnpg" description="CNPG Scheduled Backup" */}}
+{{/* inscribe: type="template" name="cnpg-scheduled-backup" command="scheduled-backup cnpg" description="CNPG Scheduled Backup" */}}
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
 metadata:
