@@ -36,11 +36,11 @@ func BuildDynamicCommands(dir string) []*cobra.Command {
 		parentName := segments[0]
 		parent, ok := parents[parentName]
 		if !ok {
-			parent = buildParentCommand(parentName)
+			parent = buildParentCommand(parentName, dir)
 			parents[parentName] = parent
 		}
 
-		leaf := buildLeafCommand(reg, tmpl)
+		leaf := buildLeafCommand(reg, tmpl, dir)
 		parent.AddCommand(leaf)
 	}
 
@@ -55,18 +55,20 @@ func BuildDynamicCommands(dir string) []*cobra.Command {
 }
 
 // buildParentCommand creates a grouping command that delegates to RunParentCommand.
-func buildParentCommand(name string) *cobra.Command {
+// It captures dir so the parent command scans the same directory used for command discovery.
+func buildParentCommand(name string, dir string) *cobra.Command {
 	return &cobra.Command{
 		Use:   name,
 		Short: fmt.Sprintf("Generate %s manifests", name),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return RunParentCommand(cmd, name, templateDir)
+			return RunParentCommand(cmd, name, dir)
 		},
 	}
 }
 
 // buildLeafCommand creates a leaf command with dynamic flags from the template's fields.
-func buildLeafCommand(reg domain.TemplateRegistry, tmpl domain.TemplateMeta) *cobra.Command {
+// It captures dir so RunBridge uses the same template directory that was used for discovery.
+func buildLeafCommand(reg domain.TemplateRegistry, tmpl domain.TemplateMeta, dir string) *cobra.Command {
 	segments := strings.Fields(tmpl.Command)
 	leafName := segments[len(segments)-1]
 
@@ -99,7 +101,7 @@ func buildLeafCommand(reg domain.TemplateRegistry, tmpl domain.TemplateMeta) *co
 
 			return RunBridge(BridgeConfig{
 				TemplateName: tmpl.Name,
-				TemplateDir:  templateDir,
+				TemplateDir:  dir,
 				OutputDir:    outputDir,
 				FlagValues:   flagValues,
 				Filename:     filename,
