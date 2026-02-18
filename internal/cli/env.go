@@ -30,7 +30,7 @@ Or with the current --template-dir value:
 				return fmt.Errorf("resolving path: %w", err)
 			}
 
-			fmt.Printf("export INSCRIBE_TEMPLATE_DIR=%q\n", absDir)
+			cmd.Printf("export INSCRIBE_TEMPLATE_DIR=%q\n", absDir)
 			return nil
 		},
 	}

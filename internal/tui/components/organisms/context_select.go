@@ -7,8 +7,8 @@ import (
 	"github.com/charmbracelet/huh"
 )
 
-// ContextSelectGroup creates a form group for selecting Kubernetes context and namespace.
-func ContextSelectGroup(client domain.KubeClient, context, namespace *string) *huh.Group {
+// ContextSelectGroup creates a form group for selecting a Kubernetes context.
+func ContextSelectGroup(client domain.KubeClient, context *string) *huh.Group {
 	return huh.NewGroup(
 		molecules.K8sContextSelect(client, context),
 	).Title("Kubernetes Connection")

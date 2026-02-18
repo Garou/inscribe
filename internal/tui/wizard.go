@@ -61,7 +61,7 @@ func RunWizard(
 	// Phase 1: Context selection (if needed and not pre-filled)
 	if needsK8s && contextValue == "" {
 		contextForm := huh.NewForm(
-			organisms.ContextSelectGroup(client, &contextValue, &namespaceValue),
+			organisms.ContextSelectGroup(client, &contextValue),
 		).WithTheme(atoms.Theme())
 
 		if err := contextForm.Run(); err != nil {

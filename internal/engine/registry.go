@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
 
 	"inscribe/internal/domain"
@@ -82,7 +83,10 @@ func (r *Registry) processFile(path string) error {
 			FilePath:    path,
 		}
 	case "sub-template":
-		content := readContentAfterHeader(scanner)
+		content, err := readContentAfterHeader(scanner)
+		if err != nil {
+			return fmt.Errorf("reading sub-template content from %q: %w", path, err)
+		}
 		r.subTemplates[header["group"]] = append(r.subTemplates[header["group"]], domain.SubTemplateMeta{
 			Group:       header["group"],
 			Description: header["description"],
@@ -90,12 +94,17 @@ func (r *Registry) processFile(path string) error {
 			FilePath:    path,
 		})
 	case "list":
-		items := parseListItems(scanner)
+		items, err := parseListItems(scanner)
+		if err != nil {
+			return fmt.Errorf("reading list items from %q: %w", path, err)
+		}
 		r.staticLists[header["name"]] = &domain.StaticListMeta{
 			Name:     header["name"],
 			Items:    items,
 			FilePath: path,
 		}
+	default:
+		return fmt.Errorf("unknown inscribe type %q in %q", header["type"], path)
 	}
 
 	return nil
@@ -119,16 +128,19 @@ func parseHeader(line string) map[string]string {
 }
 
 // readContentAfterHeader reads all remaining content after the header line.
-func readContentAfterHeader(scanner *bufio.Scanner) string {
+func readContentAfterHeader(scanner *bufio.Scanner) (string, error) {
 	var lines []string
 	for scanner.Scan() {
 		lines = append(lines, scanner.Text())
 	}
-	return strings.Join(lines, "\n")
+	if err := scanner.Err(); err != nil {
+		return "", fmt.Errorf("scanning content: %w", err)
+	}
+	return strings.Join(lines, "\n"), nil
 }
 
 // parseListItems reads YAML list items (lines starting with "- ").
-func parseListItems(scanner *bufio.Scanner) []string {
+func parseListItems(scanner *bufio.Scanner) ([]string, error) {
 	var items []string
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
@@ -136,7 +148,10 @@ func parseListItems(scanner *bufio.Scanner) []string {
 			items = append(items, strings.TrimPrefix(line, "- "))
 		}
 	}
-	return items
+	if err := scanner.Err(); err != nil {
+		return nil, fmt.Errorf("scanning list items: %w", err)
+	}
+	return items, nil
 }
 
 func (r *Registry) GetTemplate(name string) (*domain.TemplateMeta, error) {
@@ -168,6 +183,9 @@ func (r *Registry) ListTemplates() []domain.TemplateMeta {
 	for _, t := range r.templates {
 		result = append(result, *t)
 	}
+	sort.Slice(result, func(i, j int) bool {
+		return result[i].Name < result[j].Name
+	})
 	return result
 }
 
@@ -178,5 +196,8 @@ func (r *Registry) ListTemplatesByCommandPrefix(prefix string) []domain.Template
 			result = append(result, *t)
 		}
 	}
+	sort.Slice(result, func(i, j int) bool {
+		return result[i].Name < result[j].Name
+	})
 	return result
 }
