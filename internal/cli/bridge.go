@@ -160,7 +160,7 @@ func printColoredYAML(yaml string) {
 		fmt.Print(yaml)
 		return
 	}
-	buf.WriteTo(os.Stdout)
+	_, _ = buf.WriteTo(os.Stdout)
 }
 
 // RunParentCommand handles parent commands (e.g. "inscribe cluster") by scanning

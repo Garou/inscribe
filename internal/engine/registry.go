@@ -59,7 +59,7 @@ func (r *Registry) processFile(path string) error {
 	if err != nil {
 		return fmt.Errorf("opening %q: %w", path, err)
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	scanner := bufio.NewScanner(f)
 	if !scanner.Scan() {
