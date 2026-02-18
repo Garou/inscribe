@@ -44,8 +44,7 @@ inscribe
 │   └── cnpg                 # CNPG One-Off Backup
 ├── scheduled-backup         # Generate scheduled backup manifests
 │   └── cnpg                 # CNPG Scheduled Backup
-├── env [path]               # Output shell config for template directory
-└── completion               # Shell completion scripts
+└── env [path]               # Output shell config for template directory
 ```
 
 ### `inscribe cluster cnpg`
@@ -171,6 +170,8 @@ Used with `input` fields:
 | `memory` | Kubernetes memory quantity (e.g. `256Mi`, `4Gi`) |
 | `cpu` | Kubernetes CPU quantity (e.g. `100m`, `0.5`, `2`) |
 | `cron-schedule` | Standard 5-field cron expression (e.g. `0 0 * * *`, `*/5 * * * 1-5`) |
+| `filename` | Valid output filename (no path separators or directory traversal) |
+| `path` | Non-empty directory path |
 
 ### Auto-Detect Sources
 
