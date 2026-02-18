@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"inscribe/internal/domain"
@@ -47,6 +48,9 @@ func BuildDynamicCommands(dir string) []*cobra.Command {
 	for _, cmd := range parents {
 		cmds = append(cmds, cmd)
 	}
+	sort.Slice(cmds, func(i, j int) bool {
+		return cmds[i].Use < cmds[j].Use
+	})
 	return cmds
 }
 
@@ -56,7 +60,7 @@ func buildParentCommand(name string) *cobra.Command {
 		Use:   name,
 		Short: fmt.Sprintf("Generate %s manifests", name),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return RunParentCommand(cmd, name)
+			return RunParentCommand(cmd, name, templateDir)
 		},
 	}
 }
@@ -73,13 +77,13 @@ func buildLeafCommand(reg domain.TemplateRegistry, tmpl domain.TemplateMeta) *co
 		fields = nil
 	}
 
-	// Storage for flag values — one per field plus context and filename
+	// Storage for flag values — one per field plus context, kubeconfig, and filename
 	flagVars := make(map[string]*string)
 	for _, f := range fields {
 		val := ""
 		flagVars[f.Name] = &val
 	}
-	var context, filename string
+	var context, kubeconfig, filename string
 
 	cmd := &cobra.Command{
 		Use:   leafName,
@@ -100,6 +104,7 @@ func buildLeafCommand(reg domain.TemplateRegistry, tmpl domain.TemplateMeta) *co
 				FlagValues:   flagValues,
 				Filename:     filename,
 				Context:      context,
+				Kubeconfig:   kubeconfig,
 			})
 		},
 	}
@@ -118,6 +123,7 @@ func buildLeafCommand(reg domain.TemplateRegistry, tmpl domain.TemplateMeta) *co
 
 	// Standard flags
 	cmd.Flags().StringVar(&context, "context", "", "Kubernetes context")
+	cmd.Flags().StringVar(&kubeconfig, "kubeconfig", "", "Path to kubeconfig file")
 	cmd.Flags().StringVar(&filename, "filename", "", "Output filename")
 
 	return cmd

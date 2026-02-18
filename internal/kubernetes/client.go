@@ -3,6 +3,7 @@ package kubernetes
 import (
 	"context"
 	"fmt"
+	"sort"
 
 	"inscribe/internal/domain"
 
@@ -49,6 +50,7 @@ func (c *Client) ListContexts() ([]string, error) {
 	for name := range config.Contexts {
 		contexts = append(contexts, name)
 	}
+	sort.Strings(contexts)
 	return contexts, nil
 }
 

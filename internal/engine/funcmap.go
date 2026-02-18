@@ -3,7 +3,6 @@ package engine
 import (
 	"fmt"
 	"strings"
-	"sync"
 	"text/template"
 
 	"inscribe/internal/domain"
@@ -11,12 +10,11 @@ import (
 
 // NewExtractorFuncMap returns a FuncMap for pass 1 (field extraction).
 // Each custom function appends a FieldDefinition to the collector and returns a placeholder.
-func NewExtractorFuncMap(collector *[]domain.FieldDefinition, mu *sync.Mutex) template.FuncMap {
+// Template execution is single-threaded, so no synchronization is needed.
+func NewExtractorFuncMap(collector *[]domain.FieldDefinition) template.FuncMap {
 	order := 0
 	return template.FuncMap{
 		"input": func(name, validationType string) string {
-			mu.Lock()
-			defer mu.Unlock()
 			*collector = append(*collector, domain.FieldDefinition{
 				Name:           name,
 				Type:           domain.FieldInput,
@@ -27,8 +25,6 @@ func NewExtractorFuncMap(collector *[]domain.FieldDefinition, mu *sync.Mutex) te
 			return fmt.Sprintf("__PLACEHOLDER_%s__", name)
 		},
 		"autoList": func(source string) string {
-			mu.Lock()
-			defer mu.Unlock()
 			*collector = append(*collector, domain.FieldDefinition{
 				Name:   source,
 				Type:   domain.FieldAutoList,
@@ -39,8 +35,6 @@ func NewExtractorFuncMap(collector *[]domain.FieldDefinition, mu *sync.Mutex) te
 			return fmt.Sprintf("__PLACEHOLDER_%s__", source)
 		},
 		"templateGroup": func(group string) string {
-			mu.Lock()
-			defer mu.Unlock()
 			*collector = append(*collector, domain.FieldDefinition{
 				Name:   group,
 				Type:   domain.FieldTemplateGroup,
@@ -51,8 +45,6 @@ func NewExtractorFuncMap(collector *[]domain.FieldDefinition, mu *sync.Mutex) te
 			return fmt.Sprintf("__PLACEHOLDER_%s__", group)
 		},
 		"staticList": func(listName string) string {
-			mu.Lock()
-			defer mu.Unlock()
 			*collector = append(*collector, domain.FieldDefinition{
 				Name:   listName,
 				Type:   domain.FieldStaticList,

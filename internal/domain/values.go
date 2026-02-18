@@ -177,7 +177,7 @@ func NewFilename(s string) (Filename, error) {
 	if strings.Contains(s, "/") || strings.Contains(s, "\\") {
 		return Filename{}, fmt.Errorf("filename must not contain path separators")
 	}
-	if s == ".." || strings.HasPrefix(s, "..") {
+	if strings.HasPrefix(s, "..") {
 		return Filename{}, fmt.Errorf("filename must not contain path traversal")
 	}
 	return Filename{value: s}, nil

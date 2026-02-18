@@ -166,15 +166,15 @@ func printColoredYAML(yaml string) {
 // RunParentCommand handles parent commands (e.g. "inscribe cluster") by scanning
 // the registry for templates matching the command prefix, then either auto-selecting
 // (one match) or showing an interactive picker before delegating to the leaf subcommand.
-func RunParentCommand(cmd *cobra.Command, commandPrefix string) error {
-	reg, err := engine.NewRegistry(templateDir)
+func RunParentCommand(cmd *cobra.Command, commandPrefix string, tmplDir string) error {
+	reg, err := engine.NewRegistry(tmplDir)
 	if err != nil {
-		return fmt.Errorf("loading templates from %q: %w", templateDir, err)
+		return fmt.Errorf("loading templates from %q: %w", tmplDir, err)
 	}
 
 	matches := reg.ListTemplatesByCommandPrefix(commandPrefix)
 	if len(matches) == 0 {
-		return fmt.Errorf("no templates found for %q in %q", commandPrefix, templateDir)
+		return fmt.Errorf("no templates found for %q in %q", commandPrefix, tmplDir)
 	}
 
 	var selected domain.TemplateMeta
@@ -218,17 +218,14 @@ func RunParentCommand(cmd *cobra.Command, commandPrefix string) error {
 }
 
 func matchesSubTemplate(value string, sub domain.SubTemplateMeta) bool {
-	// Match by description (case-insensitive friendly name like "prod", "qa", "test")
-	return value == sub.Description || value == sub.FilePath
+	// Match by description (case-insensitive) or exact file path
+	return strings.EqualFold(value, sub.Description) || value == sub.FilePath
 }
 
 func listSubTemplateOptions(subs []domain.SubTemplateMeta) string {
-	var options string
+	descs := make([]string, len(subs))
 	for i, sub := range subs {
-		if i > 0 {
-			options += ", "
-		}
-		options += fmt.Sprintf("%q", sub.Description)
+		descs[i] = fmt.Sprintf("%q", sub.Description)
 	}
-	return options
+	return strings.Join(descs, ", ")
 }

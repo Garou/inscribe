@@ -1,19 +1,16 @@
 package engine
 
 import (
-	"sync"
+	"bytes"
 	"testing"
 	"text/template"
 
 	"inscribe/internal/domain"
-
-	"bytes"
 )
 
 func TestExtractorFuncMap(t *testing.T) {
 	var fields []domain.FieldDefinition
-	var mu sync.Mutex
-	fm := NewExtractorFuncMap(&fields, &mu)
+	fm := NewExtractorFuncMap(&fields)
 
 	tmplStr := `name={{ input "name" "dns-name" }} ns={{ autoList "namespace" }} group={{ templateGroup "resources" }} pick={{ staticList "items" }}`
 	tmpl, err := template.New("test").Funcs(fm).Parse(tmplStr)

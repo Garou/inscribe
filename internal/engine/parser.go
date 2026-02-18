@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"sync"
 	"text/template"
 
 	"inscribe/internal/domain"
@@ -37,8 +36,7 @@ func (p *Parser) ExtractFields(templateName string) ([]domain.FieldDefinition, e
 	templateContent := stripHeader(string(content))
 
 	var fields []domain.FieldDefinition
-	var mu sync.Mutex
-	funcMap := NewExtractorFuncMap(&fields, &mu)
+	funcMap := NewExtractorFuncMap(&fields)
 
 	tmpl, err := template.New(templateName).Funcs(funcMap).Parse(templateContent)
 	if err != nil {

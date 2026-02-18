@@ -3,6 +3,7 @@ package cli
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -42,10 +43,10 @@ data:
 	}
 
 	content := string(data)
-	if !contains(content, "name: my-config") {
+	if !strings.Contains(content, "name: my-config") {
 		t.Errorf("output should contain 'name: my-config', got:\n%s", content)
 	}
-	if !contains(content, "key: hello") {
+	if !strings.Contains(content, "key: hello") {
 		t.Errorf("output should contain 'key: hello', got:\n%s", content)
 	}
 }
@@ -126,7 +127,7 @@ cpu: "2"
 	}
 
 	content := string(data)
-	if !contains(content, "memory: \"4Gi\"") {
+	if !strings.Contains(content, "memory: \"4Gi\"") {
 		t.Errorf("output should contain sub-template content, got:\n%s", content)
 	}
 }
@@ -165,7 +166,7 @@ method: {{ staticList "methods" }}
 	}
 
 	content := string(data)
-	if !contains(content, "method: barmanObjectStore") {
+	if !strings.Contains(content, "method: barmanObjectStore") {
 		t.Errorf("output should contain list value, got:\n%s", content)
 	}
 }
@@ -196,19 +197,6 @@ method: {{ staticList "methods" }}
 	if err == nil {
 		t.Error("expected error for invalid list value")
 	}
-}
-
-func contains(s, substr string) bool {
-	return len(s) >= len(substr) && (s == substr || len(s) > 0 && containsStr(s, substr))
-}
-
-func containsStr(s, substr string) bool {
-	for i := 0; i <= len(s)-len(substr); i++ {
-		if s[i:i+len(substr)] == substr {
-			return true
-		}
-	}
-	return false
 }
 
 func writeFile(t *testing.T, path, content string) {
