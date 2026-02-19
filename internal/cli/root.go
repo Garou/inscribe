@@ -19,10 +19,10 @@ func NewRootCmd() *cobra.Command {
 		Long:  "Inscribe is an interactive CLI tool for generating Kubernetes manifest files via templating.",
 	}
 
-	cmd.PersistentFlags().StringVar(&templateDir, "template-dir", getEnvOrDefault("INSCRIBE_TEMPLATE_DIR", "templates"), "Path to template directory")
+	cmd.PersistentFlags().StringVar(&templateDir, "template-dir", getEnvOrDefault("INSCRIBE_TEMPLATE_DIR", "template_examples"), "Path to template directory")
 	cmd.PersistentFlags().StringVarP(&outputDir, "output-dir", "o", ".", "Output directory for generated manifests")
 
-	defaultDir := getEnvOrDefault("INSCRIBE_TEMPLATE_DIR", "templates")
+	defaultDir := getEnvOrDefault("INSCRIBE_TEMPLATE_DIR", "template_examples")
 	for _, sub := range BuildDynamicCommands(defaultDir) {
 		cmd.AddCommand(sub)
 	}

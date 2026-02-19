@@ -91,7 +91,7 @@ Generates a CloudNativePG scheduled backup manifest.
 
 | Flag | Env Variable | Default | Description |
 |---|---|---|---|
-| `--template-dir` | `INSCRIBE_TEMPLATE_DIR` | `templates` | Path to template directory |
+| `--template-dir` | `INSCRIBE_TEMPLATE_DIR` | `template_examples` | Path to template directory |
 | `-o`, `--output-dir` | | `.` | Output directory for generated manifests |
 
 ### `inscribe env`
@@ -222,5 +222,5 @@ inscribe/
 │   │   └── components/    # Atomic design: atoms, molecules, organisms
 │   ├── cli/               # Cobra commands and bridge logic
 │   └── output/            # Manifest file writer
-└── templates/cnpg/        # Bundled CNPG templates
+└── template_examples/cnpg/  # Bundled CNPG templates
 ```
